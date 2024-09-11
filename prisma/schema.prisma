@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                  Int              @id @default(autoincrement())
+  id                      Int              @id @default(autoincrement())
   email                   String           @unique
   username                String
   questionnaires          Questionnaire[]  
@@ -21,15 +21,24 @@ model Questionnaire {
   headCount       Int
   userId          Int
   user            User             @relation(fields: [userId], references: [id])
+  questions       Question[]
+}
+
+model Question {
+  id              Int              @id @default(autoincrement())
+  text            String
+  questionnaireId String
+  questionnaire   Questionnaire    @relation(fields: [questionnaireId], references: [id])
   answers         Answer[]
 }
 
 model Answer {
   id              Int              @id @default(autoincrement())
   content         String
-  questionnaireId String          
+  questionnaireId String  
+  questionId      Int        
   userId          Int
   user            User             @relation(fields: [userId], references: [id])
-  questionnaire   Questionnaire    @relation(fields: [questionnaireId], references: [id])
+  question        Question         @relation(fields: [questionId], references: [id])
   createdAt       DateTime         @default(now())
 }
