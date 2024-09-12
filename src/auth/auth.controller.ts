@@ -16,37 +16,20 @@ export class AuthController {
   @Get('kakao/callback')
   @UseGuards(KakaoAuthGuard)
   async kakaoCallback(@CallbackUserData() userData: CallbackUserDataDTO) {
-    const { access_token } = await this.authService.login(userData);
+    const { providerId: id, username } = userData;
 
-    return { accessToken: access_token };
+    const {
+      accessToken,
+      refreshToken,
+      accessTokenExpiredAt,
+      refreshTokenExpiredAt,
+    } = await this.authService.login({ id: Number(id), username });
+
+    return {
+      accessToken,
+      refreshToken,
+      accessTokenExpiredAt,
+      refreshTokenExpiredAt,
+    };
   }
 }
-
-//   const user = req.user as CallbackUserDataDTO;
-
-//   // JWT 토큰 생성
-//   const tokens = await this.authService.generateTokens({
-//     id: user.providerId,
-//     username: user.username,
-//     email: user.email,
-//     accessToken: '',
-//     refreshToken: '',
-//   });
-
-//   // CallbackUserDataDTO에 accessToken과 refreshToken 추가
-//   const callbackUserData: CallbackUserDataDTO = {
-//     id: user.providerId,
-//     email: user.email,
-//     username: user.username,
-//     accessToken: tokens.accessToken,
-//     refreshToken: tokens.refreshToken,
-//   };
-
-//   // 프론트엔드로 access token과 refresh token 반환
-//   return {
-//     message: 'Login successful',
-//     user: callbackUserData,
-//   };
-// }
-//   }
-// }

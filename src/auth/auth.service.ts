@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CallbackUserDataDTO } from './dto/callback-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JWTPayloadDTO } from './dto/jwt.payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,22 +9,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(userData: {
-    id: string;
-    username: string;
-    email: string;
-  }) {
-    const { username, email } = userData;
+  async validateUser(userData: { id: number; username: string }) {
+    const { username, id } = userData;
 
     let user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { id: id.toString() },
     });
 
     if (!user) {
       user = await this.prisma.user.create({
         data: {
+          id: id.toString(),
           username,
-          email,
         },
       });
     }
@@ -34,9 +28,8 @@ export class AuthService {
     return user;
   }
 
-  // JWT access token과 refresh token 생성
-  async generateTokens(user: CallbackUserDataDTO) {
-    const payload = { username: user.username, sub: user.providerId };
+  async generateTokens(user: { id: number; username: string }) {
+    const payload = { username: user.username, sub: user.id };
 
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: '1h',
@@ -46,16 +39,29 @@ export class AuthService {
       expiresIn: '7d',
     });
 
+    const now = new Date();
+    const accessTokenExpiredAt = new Date(
+      now.getTime() + 1 * 60 * 60 * 1000,
+    ).toISOString(); // 1시간 후
+    const refreshTokenExpiredAt = new Date(
+      now.getTime() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString(); // 7일 후
+
     return {
       accessToken,
       refreshToken,
+      accessTokenExpiredAt,
+      refreshTokenExpiredAt,
     };
   }
 
-  async login(userData: CallbackUserDataDTO) {
-    const payload: JWTPayloadDTO = { providerId: userData.providerId };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+  async login(userData: { id: number; username: string }) {
+    const { id, username } = userData;
+    const user = await this.validateUser({ id, username });
+
+    return await this.generateTokens({
+      id: Number(user.id),
+      username: user.username,
+    });
   }
 }

@@ -19,12 +19,11 @@ export class KaKaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     done: (error: any, user?: any, info?: any) => void,
   ): Promise<any> {
     try {
-      const { id, username, displayName, _json } = profile;
+      const { id, username, displayName } = profile;
 
       const user = {
-        id,
+        id: Number(id),
         username: username ?? displayName,
-        email: (_json && _json.kakao_account.email) ?? '',
       };
 
       const validatedUser = await this.authService.validateUser(user);

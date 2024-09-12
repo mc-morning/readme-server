@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CallbackUserDataDTO {
   @IsString()
@@ -19,14 +19,6 @@ export class CallbackUserDataDTO {
     required: true,
   })
   public username: string;
-
-  @IsEmail()
-  @ApiProperty({
-    example: 'corinthionia@gmail.com',
-    description: 'Email of OAuth provider',
-    required: true,
-  })
-  public email: string;
 
   @IsString()
   @IsNotEmpty()
