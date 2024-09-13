@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                      BigInt   @id @unique
+  id                      String   @id @unique
   username                String
   questionnaires          Questionnaire[]  
   answers                 Answer[]        
@@ -18,7 +18,7 @@ model Questionnaire {
   id              String           @id @default(uuid())
   title           String
   headCount       Int
-  userId          BigInt
+  userId          String
   user            User             @relation(fields: [userId], references: [id])
   questions       Question[]
 }
@@ -36,7 +36,7 @@ model Answer {
   content         String
   questionnaireId String  
   questionId      Int        
-  userId          BigInt
+  userId          String
   user            User             @relation(fields: [userId], references: [id])
   question        Question         @relation(fields: [questionId], references: [id])
   createdAt       DateTime         @default(now())

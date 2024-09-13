@@ -23,7 +23,7 @@ export class AuthController {
       refreshToken,
       accessTokenExpiredAt,
       refreshTokenExpiredAt,
-    } = await this.authService.login({ id: Number(id), username });
+    } = await this.authService.login({ id: id.toString(), username });
 
     return {
       accessToken,

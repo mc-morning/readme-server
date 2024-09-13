@@ -13,13 +13,13 @@ export class AuthService {
     const { username, id } = userData;
 
     let user = await this.prisma.user.findUnique({
-      where: { id: Number(id) },
+      where: { id },
     });
 
     if (!user) {
       user = await this.prisma.user.create({
         data: {
-          id: Number(id),
+          id,
           username,
         },
       });
@@ -28,7 +28,7 @@ export class AuthService {
     return user;
   }
 
-  async generateTokens(user: { id: number; username: string }) {
+  async generateTokens(user: { id: string; username: string }) {
     const payload = { username: user.username, sub: user.id };
 
     const accessToken = this.jwtService.sign(payload, {
@@ -55,12 +55,12 @@ export class AuthService {
     };
   }
 
-  async login(userData: { id: number; username: string }) {
+  async login(userData: { id: string; username: string }) {
     const { id, username } = userData;
-    const user = await this.validateUser({ id: id.toString(), username });
+    const user = await this.validateUser({ id, username });
 
     return await this.generateTokens({
-      id: Number(user.id),
+      id: user.id,
       username: user.username,
     });
   }
