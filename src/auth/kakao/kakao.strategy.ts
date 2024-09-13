@@ -22,7 +22,7 @@ export class KaKaoStrategy extends PassportStrategy(Strategy, 'kakao') {
       const { id, username, displayName } = profile;
 
       const user = {
-        id: Number(id),
+        id: id.toString(),
         username: username ?? displayName,
       };
 

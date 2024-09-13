@@ -5,11 +5,11 @@ export class CallbackUserDataDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '1234',
-    description: 'User id of OAuth provider',
+    example: '1705324',
+    description: 'User ID of OAuth provider',
     required: true,
   })
-  public providerId: string;
+  public id: string;
 
   @IsString()
   @IsNotEmpty()
