@@ -9,17 +9,17 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(userData: { id: number; username: string }) {
+  async validateUser(userData: { id: string; username: string }) {
     const { username, id } = userData;
 
     let user = await this.prisma.user.findUnique({
-      where: { id: id.toString() },
+      where: { id: Number(id) },
     });
 
     if (!user) {
       user = await this.prisma.user.create({
         data: {
-          id: id.toString(),
+          id: Number(id),
           username,
         },
       });
@@ -57,7 +57,7 @@ export class AuthService {
 
   async login(userData: { id: number; username: string }) {
     const { id, username } = userData;
-    const user = await this.validateUser({ id, username });
+    const user = await this.validateUser({ id: id.toString(), username });
 
     return await this.generateTokens({
       id: Number(user.id),

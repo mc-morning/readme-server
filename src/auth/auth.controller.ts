@@ -16,7 +16,7 @@ export class AuthController {
   @Get('kakao/callback')
   @UseGuards(KakaoAuthGuard)
   async kakaoCallback(@CallbackUserData() userData: CallbackUserDataDTO) {
-    const { providerId: id, username } = userData;
+    const { id, username } = userData;
 
     const {
       accessToken,

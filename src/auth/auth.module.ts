@@ -15,7 +15,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   providers: [AuthService, KaKaoStrategy, PrismaService],
-  // exports: [AuthService, PassportModule],
   controllers: [AuthController],
 })
 export class AuthModule {}

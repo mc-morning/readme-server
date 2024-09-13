@@ -1,15 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBase64, IsNotEmpty, IsString } from 'class-validator';
 
 export class CallbackUserDataDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '1234',
-    description: 'User id of OAuth provider',
+    example: '73144941-797b-4596-9409-0d8674a01705',
+    description: 'User ID',
     required: true,
   })
-  public providerId: string;
+  public id: string;
+
+  @IsBase64()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 1705324,
+    description: 'User ID of OAuth provider',
+    required: true,
+  })
+  public providerId: number;
 
   @IsString()
   @IsNotEmpty()
