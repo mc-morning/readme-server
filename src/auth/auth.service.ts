@@ -40,12 +40,8 @@ export class AuthService {
     });
 
     const now = new Date();
-    const accessTokenExpiredAt = new Date(
-      now.getTime() + 1 * 60 * 60 * 1000,
-    ).toISOString(); // 1시간 후
-    const refreshTokenExpiredAt = new Date(
-      now.getTime() + 7 * 24 * 60 * 60 * 1000,
-    ).toISOString(); // 7일 후
+    const accessTokenExpiredAt = new Date(now.getTime() + 1 * 60 * 60); // 1시간 후
+    const refreshTokenExpiredAt = new Date(now.getTime() + 7 * 24 * 60 * 60); // 7일 후
 
     return {
       accessToken,
