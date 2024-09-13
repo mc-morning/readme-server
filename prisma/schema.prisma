@@ -3,41 +3,42 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
-  id                      String   @id @unique
-  username                String
-  questionnaires          Questionnaire[]  
-  answers                 Answer[]        
+  id             String          @id @unique
+  username       String
+  answers        Answer[]
+  questionnaires Questionnaire[]
 }
 
 model Questionnaire {
-  id              String           @id @default(uuid())
-  title           String
-  headCount       Int
-  userId          String
-  user            User             @relation(fields: [userId], references: [id])
-  questions       Question[]
+  id        String     @id @default(uuid())
+  title     String
+  headCount Int
+  userId    String
+  questions Question[]
+  user      User       @relation(fields: [userId], references: [id])
 }
 
 model Question {
-  id              Int              @id @default(autoincrement())
+  id              Int           @id @default(autoincrement())
   text            String
   questionnaireId String
-  questionnaire   Questionnaire    @relation(fields: [questionnaireId], references: [id])
   answers         Answer[]
+  questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id])
 }
 
 model Answer {
-  id              Int              @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   content         String
-  questionnaireId String  
-  questionId      Int        
+  questionnaireId String
+  questionId      Int
   userId          String
-  user            User             @relation(fields: [userId], references: [id])
-  question        Question         @relation(fields: [questionId], references: [id])
-  createdAt       DateTime         @default(now())
+  createdAt       DateTime @default(now())
+  question        Question @relation(fields: [questionId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
 }
