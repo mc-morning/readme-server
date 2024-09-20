@@ -32,7 +32,7 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const { id, username } = userData;
-    console.log('callback user', userData);
+
     const {
       accessToken,
       refreshToken,
