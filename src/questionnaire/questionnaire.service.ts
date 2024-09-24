@@ -13,10 +13,20 @@ export class QuestionnaireService {
       },
     });
 
-    if (!questionnaires || questionnaires.length === 0) {
+    if (!questionnaires) {
       throw new NotFoundException('질문지가 존재하지 않습니다.');
     }
-
+    console.log(questionnaires);
     return questionnaires;
+  }
+
+  async createQuestionnaire(userId: string, title: string, headCount: number) {
+    return await this.prisma.questionnaire.create({
+      data: {
+        title,
+        headCount,
+        userId,
+      },
+    });
   }
 }
