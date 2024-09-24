@@ -48,16 +48,17 @@ export class QuestionnaireService {
       throw new NotFoundException('해당 질문지를 찾을 수 없습니다.');
     }
 
-    const answers = questionnaire.questions.flatMap((question) =>
-      question.answers.map((answer) => answer.content),
-    );
+    const questionnaireResponse = questionnaire.questions.map((question) => ({
+      questionId: question.id,
+      question: question.text,
+      answers: question.answers.flatMap((answer) => answer.content),
+    }));
 
     return {
       id: questionnaire.id,
       title: questionnaire.title,
       headCount: questionnaire.headCount,
-      userId: questionnaire.userId,
-      answers,
+      questions: questionnaireResponse,
     };
   }
 }
