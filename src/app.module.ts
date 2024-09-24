@@ -5,11 +5,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { QuestionnaireModule } from './questionnaire/questionnaire.module';
+import { AnswerModule } from './answer/answer.module';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule,
+    AnswerModule,
     QuestionnaireModule,
     ConfigModule.forRoot({
       cache: true,

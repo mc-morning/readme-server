@@ -16,7 +16,7 @@ export class QuestionnaireService {
     if (!questionnaires) {
       throw new NotFoundException('질문지가 존재하지 않습니다.');
     }
-    console.log(questionnaires);
+
     return questionnaires;
   }
 
