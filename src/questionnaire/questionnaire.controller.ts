@@ -5,6 +5,7 @@ import {
   Request,
   Post,
   Body,
+  Param,
 } from '@nestjs/common';
 import { QuestionnaireService } from './questionnaire.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.auth.guard';
@@ -43,5 +44,12 @@ export class QuestionnaireController {
     );
 
     return questionnaire;
+  }
+
+  @Get('/:questionnaireId')
+  async getQuestionnaireAnswers(
+    @Param('questionnaireId') questionnaireId: string,
+  ) {
+    return this.questionnaireService.getAnswersByQuestionnaire(questionnaireId);
   }
 }

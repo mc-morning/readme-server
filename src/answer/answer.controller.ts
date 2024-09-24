@@ -4,6 +4,9 @@ import {
   Body,
   UnauthorizedException,
   UseGuards,
+  Get,
+  Req,
+  Param,
   Request,
 } from '@nestjs/common';
 import { AnswerService } from './answer.service';
@@ -40,6 +43,21 @@ export class AnswerController {
       questionnaireId,
       question,
       answer,
+    );
+  }
+
+  @Get('/:questionnaireId/:questionId')
+  async getAnswer(
+    @Req() req: any,
+    @Param('questionnaireId') questionnaireId: string,
+    @Param('questionId') questionId: number,
+  ) {
+    const user = req.user;
+
+    return this.answerService.getAnswer(
+      user.userId,
+      questionnaireId,
+      questionId,
     );
   }
 }

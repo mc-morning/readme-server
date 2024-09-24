@@ -29,4 +29,35 @@ export class QuestionnaireService {
       },
     });
   }
+
+  async getAnswersByQuestionnaire(questionnaireId: string) {
+    const questionnaire = await this.prisma.questionnaire.findUnique({
+      where: {
+        id: questionnaireId,
+      },
+      include: {
+        questions: {
+          include: {
+            answers: true,
+          },
+        },
+      },
+    });
+
+    if (!questionnaire) {
+      throw new NotFoundException('해당 질문지를 찾을 수 없습니다.');
+    }
+
+    const answers = questionnaire.questions.flatMap((question) =>
+      question.answers.map((answer) => answer.content),
+    );
+
+    return {
+      id: questionnaire.id,
+      title: questionnaire.title,
+      headCount: questionnaire.headCount,
+      userId: questionnaire.userId,
+      answers,
+    };
+  }
 }

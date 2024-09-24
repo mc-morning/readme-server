@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -39,7 +43,6 @@ export class AnswerService {
       throw new BadRequestException('이미 답변을 작성했습니다.');
     }
 
-    // 3. 새로운 답변 작성
     const newAnswer = await this.prisma.answer.create({
       data: {
         userId,
@@ -50,5 +53,29 @@ export class AnswerService {
     });
 
     return newAnswer;
+  }
+
+  async getAnswer(userId: string, questionnaireId: string, questionId: number) {
+    const answer = await this.prisma.answer.findFirst({
+      where: {
+        userId,
+        questionnaireId,
+        questionId: Number(questionId),
+      },
+      include: {
+        question: true,
+      },
+    });
+
+    if (!answer) {
+      throw new NotFoundException('이전에 작성한 답변이 없습니다.');
+    }
+
+    return {
+      questionnaireId: answer.questionnaireId,
+      questionId: answer.questionId,
+      question: answer.question.text,
+      answer: answer.content,
+    };
   }
 }
