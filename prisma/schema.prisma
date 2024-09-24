@@ -23,6 +23,7 @@ model Questionnaire {
   headCount Int
   userId    String
   questions Question[]
+  createdAt DateTime   @default(now())
   user      User       @relation(fields: [userId], references: [id])
 }
 
