@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -29,18 +25,6 @@ export class AnswerService {
           questionnaireId,
         },
       });
-    }
-
-    const existingAnswer = await this.prisma.answer.findFirst({
-      where: {
-        userId,
-        questionnaireId,
-        questionId: question.id,
-      },
-    });
-
-    if (existingAnswer) {
-      throw new BadRequestException('이미 답변을 작성했습니다.');
     }
 
     const newAnswer = await this.prisma.answer.create({
