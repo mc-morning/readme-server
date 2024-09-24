@@ -35,7 +35,7 @@ export class AuthService {
     });
 
     const now = new Date().getTime();
-    const accessTokenExpiredAt = new Date(now + 1 * 60 * 60).getTime(); // 1시간 후
+    const accessTokenExpiredAt = new Date(now + 1 * 60 * 60 * 1000).getTime(); // 1시간 후
 
     return {
       accessToken,
@@ -50,7 +50,9 @@ export class AuthService {
     });
 
     const now = new Date().getTime();
-    const refreshTokenExpiredAt = new Date(now + 14 * 24 * 60 * 60).getTime(); // 14일 후
+    const refreshTokenExpiredAt = new Date(
+      now + 14 * 24 * 60 * 60 * 1000,
+    ).getTime(); // 14일 후
 
     return {
       refreshToken,
