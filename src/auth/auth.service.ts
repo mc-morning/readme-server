@@ -111,4 +111,17 @@ export class AuthService {
       data: { refreshToken },
     });
   }
+
+  async getUserFromToken(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      return await this.prisma.user.findUnique({
+        where: { id: decoded.userId },
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
 }
