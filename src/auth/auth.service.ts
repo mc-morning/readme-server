@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 
@@ -28,25 +28,32 @@ export class AuthService {
     return user;
   }
 
-  async generateTokens(user: { id: string; username: string }) {
-    const payload = { username: user.username, sub: user.id };
-
+  async generateAccessToken({ userId }: { userId: string }) {
+    const payload = { userId };
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: '1h',
     });
 
+    const now = new Date().getTime();
+    const accessTokenExpiredAt = new Date(now + 1 * 60 * 60).getTime(); // 1시간 후
+
+    return {
+      accessToken,
+      accessTokenExpiredAt,
+    };
+  }
+
+  async generateRefreshToken({ userId }: { userId: string }) {
+    const payload = { userId };
     const refreshToken = this.jwtService.sign(payload, {
       expiresIn: '14d',
     });
 
     const now = new Date().getTime();
-    const accessTokenExpiredAt = new Date(now + 1 * 60 * 60).getTime(); // 1시간 후
     const refreshTokenExpiredAt = new Date(now + 14 * 24 * 60 * 60).getTime(); // 14일 후
 
     return {
-      accessToken,
       refreshToken,
-      accessTokenExpiredAt,
       refreshTokenExpiredAt,
     };
   }
@@ -55,9 +62,49 @@ export class AuthService {
     const { id, username } = userData;
     const user = await this.validateUser({ id, username });
 
-    return await this.generateTokens({
-      id: user.id,
-      username: user.username,
+    const access = await this.generateAccessToken({
+      userId: user.id,
+    });
+    const refresh = await this.generateRefreshToken({
+      userId: user.id,
+    });
+
+    return { ...access, ...refresh };
+  }
+
+  async validateRefreshToken(token: string): Promise<string> {
+    try {
+      const decoded = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      const userId = decoded.sub;
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user || !user.refreshToken) {
+        throw new UnauthorizedException(
+          'User not found or refresh token not set',
+        );
+      }
+
+      const isTokenValid = user.refreshToken === token;
+
+      if (!isTokenValid) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      return user.id;
+    } catch (e) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async updateRefreshToken(id: string, refreshToken: string) {
+    await this.prisma.user.update({
+      where: { id },
+      data: { refreshToken },
     });
   }
 }
