@@ -19,4 +19,14 @@ export class QuestionnaireService {
 
     return questionnaires;
   }
+
+  async createQuestionnaire(userId: string, title: string, headCount: number) {
+    return await this.prisma.questionnaire.create({
+      data: {
+        title,
+        headCount,
+        userId,
+      },
+    });
+  }
 }
