@@ -73,6 +73,6 @@ export class AuthController {
       userId,
     });
 
-    return { accessToken: newAccessToken };
+    return { ...newAccessToken };
   }
 }

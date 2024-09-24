@@ -4,6 +4,8 @@ import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { QuestionnaireController } from './questionnaire/questionnaire.controller';
+import { QuestionnaireService } from './questionnaire/questionnaire.service';
 
 @Module({
   imports: [
@@ -14,7 +16,7 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, QuestionnaireController],
+  providers: [AppService, QuestionnaireService],
 })
 export class AppModule {}
