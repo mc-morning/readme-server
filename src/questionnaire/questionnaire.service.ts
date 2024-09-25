@@ -61,4 +61,23 @@ export class QuestionnaireService {
       questions: questionnaireResponse,
     };
   }
+
+  async deleteQuestionnaire(
+    questionnaireId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const questionnaire = await this.prisma.questionnaire.findUnique({
+      where: { id: questionnaireId },
+    });
+
+    if (!questionnaire || questionnaire.userId !== userId) {
+      return false;
+    }
+
+    await this.prisma.questionnaire.delete({
+      where: { id: questionnaireId },
+    });
+
+    return true;
+  }
 }
