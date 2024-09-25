@@ -59,7 +59,7 @@ export class AuthController {
     summary: 'Access Token 재발급',
     description: 'Access Token 재발급 API',
   })
-  async refreshAccessToken(@Headers('Authorization') authorization: string) {
+  async reissueAccessToken(@Headers('Authorization') authorization: string) {
     if (!authorization || !authorization.startsWith('Bearer ')) {
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -74,5 +74,21 @@ export class AuthController {
     });
 
     return { ...newAccessToken };
+  }
+
+  @Get('user')
+  async getUser(@Headers('Authorization') authorization: string) {
+    if (!authorization || !authorization.startsWith('Bearer ')) {
+      throw new UnauthorizedException('유효하지 않은 사용자입니다.');
+    }
+
+    const accessToken = authorization.split(' ')[1];
+
+    const userData = await this.authService.getUserFromToken(accessToken);
+    if (!userData) {
+      throw new UnauthorizedException('사용자 정보를 찾을 수 없습니다.');
+    }
+
+    return { id: userData.id, username: userData.username };
   }
 }
