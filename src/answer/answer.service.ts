@@ -1,28 +1,33 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateAnswerDTO } from './dto/create-answer.dto';
 
 @Injectable()
 export class AnswerService {
   constructor(private prisma: PrismaService) {}
 
   async createAnswer(
+    {
+      questionnaireId,
+      question: questionText,
+      questionId,
+      answer,
+    }: CreateAnswerDTO,
     userId: string,
-    questionnaireId: string,
-    questionText: string,
-    answer: string,
   ) {
     let question = await this.prisma.question.findFirst({
       where: {
         questionnaireId,
-        text: questionText,
+        id: questionId,
       },
     });
 
     if (!question) {
       question = await this.prisma.question.create({
         data: {
-          text: questionText,
           questionnaireId,
+          id: questionId,
+          text: questionText,
         },
       });
     }
@@ -30,9 +35,9 @@ export class AnswerService {
     const newAnswer = await this.prisma.answer.create({
       data: {
         userId,
-        content: answer,
         questionnaireId,
         questionId: question.id,
+        content: answer,
       },
     });
 

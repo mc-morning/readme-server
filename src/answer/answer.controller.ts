@@ -25,24 +25,18 @@ export class AnswerController {
   @Post()
   async createAnswer(@Request() req: any, @Body() body: CreateAnswerDTO) {
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('Authorization 헤더가 필요합니다.');
-    }
-
     const accessToken = authHeader.split(' ')[1];
     const userData = await this.authService.getUserFromToken(accessToken);
     if (!userData) {
-      throw new UnauthorizedException('유효하지 않은 access token입니다.');
+      throw new UnauthorizedException('유효하지 않은 사용자입니다.');
     }
 
     const { id: userId } = userData;
-    const { questionnaireId, question, answer } = body;
+    const { questionnaireId, questionId, question, answer } = body;
 
     return this.answerService.createAnswer(
+      { questionnaireId, questionId, question, answer },
       userId,
-      questionnaireId,
-      question,
-      answer,
     );
   }
 
