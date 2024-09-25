@@ -102,7 +102,6 @@ export class AnswerService {
       },
     });
 
-    console.log(questionCount, answerCount);
     return questionCount === 4 && questionCount === answerCount;
   }
 
