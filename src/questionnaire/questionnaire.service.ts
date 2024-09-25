@@ -17,7 +17,9 @@ export class QuestionnaireService {
       throw new NotFoundException('질문지가 존재하지 않습니다.');
     }
 
-    return questionnaires;
+    return questionnaires.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
   }
 
   async createQuestionnaire(userId: string, title: string, headCount: number) {

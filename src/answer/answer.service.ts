@@ -32,16 +32,35 @@ export class AnswerService {
       });
     }
 
-    const newAnswer = await this.prisma.answer.create({
-      data: {
-        userId,
+    const existingAnswer = await this.prisma.answer.findFirst({
+      where: {
         questionnaireId,
         questionId: question.id,
-        content: answer,
+        userId,
       },
     });
 
-    return newAnswer;
+    if (existingAnswer) {
+      const updatedAnswer = await this.prisma.answer.update({
+        where: { id: existingAnswer.id },
+        data: { content: answer },
+      });
+
+      await this.markQuestionnaireCompletedForUser(questionnaireId, userId);
+      return updatedAnswer;
+    } else {
+      const newAnswer = await this.prisma.answer.create({
+        data: {
+          userId,
+          questionnaireId,
+          questionId: question.id,
+          content: answer,
+        },
+      });
+
+      await this.markQuestionnaireCompletedForUser(questionnaireId, userId);
+      return newAnswer;
+    }
   }
 
   async getAnswer(userId: string, questionnaireId: string, questionId: number) {
@@ -66,5 +85,44 @@ export class AnswerService {
       question: answer.question.text,
       answer: answer.content,
     };
+  }
+
+  async checkIfUserCompletedAnswer(
+    questionnaireId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const questionCount = await this.prisma.question.count({
+      where: { questionnaireId },
+    });
+
+    const answerCount = await this.prisma.answer.count({
+      where: {
+        questionnaireId,
+        userId,
+      },
+    });
+
+    return questionCount === 4 && questionCount === answerCount;
+  }
+
+  async markQuestionnaireCompletedForUser(
+    questionnaireId: string,
+    userId: string,
+  ): Promise<void> {
+    const isCompleted = await this.checkIfUserCompletedAnswer(
+      questionnaireId,
+      userId,
+    );
+
+    if (isCompleted) {
+      await this.prisma.questionnaire.update({
+        where: { id: questionnaireId },
+        data: {
+          completedUsers: {
+            push: userId,
+          },
+        },
+      });
+    } else return;
   }
 }
