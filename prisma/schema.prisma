@@ -28,11 +28,12 @@ model Questionnaire {
 }
 
 model Question {
-  id              Int           @id @default(autoincrement())
+  id              Int
   text            String
   questionnaireId String
   answers         Answer[]
   questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id])
+  @@unique([id, questionnaireId]) 
 }
 
 model Answer {
@@ -42,6 +43,6 @@ model Answer {
   questionId      Int
   userId          String
   createdAt       DateTime @default(now())
-  question        Question @relation(fields: [questionId], references: [id])
+  question        Question @relation(fields: [questionId, questionnaireId], references: [id, questionnaireId])
   user            User     @relation(fields: [userId], references: [id])
 }
