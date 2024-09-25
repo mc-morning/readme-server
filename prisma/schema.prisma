@@ -18,13 +18,14 @@ model User {
 }
 
 model Questionnaire {
-  id        String     @id @default(uuid())
-  title     String
-  headCount Int
-  userId    String
-  questions Question[]
-  createdAt DateTime   @default(now())
-  user      User       @relation(fields: [userId], references: [id])
+  id                String     @id @default(uuid())
+  title             String
+  completedUsers    String[]   @default([])
+  headCount         Int
+  userId            String
+  questions         Question[]
+  createdAt         DateTime   @default(now())
+  user              User       @relation(fields: [userId], references: [id])
 }
 
 model Question {
