@@ -6,6 +6,9 @@ import {
   Post,
   Body,
   Param,
+  Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { QuestionnaireService } from './questionnaire.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.auth.guard';
@@ -51,5 +54,23 @@ export class QuestionnaireController {
     @Param('questionnaireId') questionnaireId: string,
   ) {
     return this.questionnaireService.getAnswersByQuestionnaire(questionnaireId);
+  }
+
+  @Delete(':questionnaireId')
+  async deleteQuestionnaire(
+    @Param('questionnaireId') questionnaireId: string,
+    @Request() req: any,
+  ) {
+    const userId = req.user.userId;
+    const deleted = await this.questionnaireService.deleteQuestionnaire(
+      questionnaireId,
+      userId,
+    );
+
+    if (!deleted) {
+      throw new HttpException('권한이 없습니다.', HttpStatus.FORBIDDEN);
+    }
+
+    return { message: '삭제되었습니다.' };
   }
 }
