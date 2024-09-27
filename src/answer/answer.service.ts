@@ -114,7 +114,16 @@ export class AnswerService {
       userId,
     );
 
-    if (isCompleted) {
+    const questionnaire = await this.prisma.questionnaire.findUnique({
+      where: {
+        id: questionnaireId,
+      },
+      select: {
+        completedUsers: true,
+      },
+    });
+
+    if (isCompleted && !questionnaire.completedUsers.includes(userId)) {
       await this.prisma.questionnaire.update({
         where: { id: questionnaireId },
         data: {
