@@ -50,10 +50,8 @@ export class QuestionnaireController {
   }
 
   @Get('/:questionnaireId')
-  async getQuestionnaireAnswers(
-    @Param('questionnaireId') questionnaireId: string,
-  ) {
-    return this.questionnaireService.getAnswersByQuestionnaire(questionnaireId);
+  async getQuestionnaire(@Param('questionnaireId') questionnaireId: string) {
+    return this.questionnaireService.getQuestionnaire(questionnaireId);
   }
 
   @Delete(':questionnaireId')
