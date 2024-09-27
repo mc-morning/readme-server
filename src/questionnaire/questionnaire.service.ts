@@ -32,7 +32,7 @@ export class QuestionnaireService {
     });
   }
 
-  async getAnswersByQuestionnaire(questionnaireId: string) {
+  async getQuestionnaire(questionnaireId: string) {
     const questionnaire = await this.prisma.questionnaire.findUnique({
       where: {
         id: questionnaireId,
@@ -43,6 +43,12 @@ export class QuestionnaireService {
             answers: true,
           },
         },
+      },
+    });
+
+    const creator = await this.prisma.user.findUnique({
+      where: {
+        id: questionnaire.userId,
       },
     });
 
@@ -58,6 +64,7 @@ export class QuestionnaireService {
 
     return {
       id: questionnaire.id,
+      creator: { id: creator.id, username: creator.username },
       title: questionnaire.title,
       headCount: questionnaire.headCount,
       questions: questionnaireResponse,
