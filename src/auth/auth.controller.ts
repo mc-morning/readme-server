@@ -50,7 +50,7 @@ export class AuthController {
 
     // 프론트엔드 주소로 리다이렉션하면서 토큰을 쿼리 파라미터로 전달
     res.redirect(
-      `http://localhost:3000/auth?access_token=${accessToken}&refresh_token=${refreshToken}&access_expired_at=${accessTokenExpiredAt}&refresh_expired_at=${refreshTokenExpiredAt}`,
+      `${process.env.CLIENT_URL}/auth?access_token=${accessToken}&refresh_token=${refreshToken}&access_expired_at=${accessTokenExpiredAt}&refresh_expired_at=${refreshTokenExpiredAt}`,
     );
   }
 

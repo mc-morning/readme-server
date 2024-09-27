@@ -14,6 +14,7 @@ import { AnswerModule } from './answer/answer.module';
     AnswerModule,
     QuestionnaireModule,
     ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       cache: true,
       isGlobal: true,
     }),
