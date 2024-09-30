@@ -46,6 +46,15 @@ export class QuestionnaireService {
       },
     });
 
+    const { completedUsers } = await this.prisma.questionnaire.findUnique({
+      where: {
+        id: questionnaireId,
+      },
+      select: {
+        completedUsers: true,
+      },
+    });
+
     const creator = await this.prisma.user.findUnique({
       where: {
         id: questionnaire.userId,
@@ -65,6 +74,7 @@ export class QuestionnaireService {
     return {
       id: questionnaire.id,
       creator: { id: creator.id, username: creator.username },
+      completedUsers: completedUsers,
       title: questionnaire.title,
       headCount: questionnaire.headCount,
       questions: questionnaireResponse,

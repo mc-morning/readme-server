@@ -3,6 +3,7 @@ import {
   Get,
   Headers,
   Post,
+  Query,
   Res,
   UnauthorizedException,
   UseGuards,
@@ -38,8 +39,10 @@ export class AuthController {
   async kakaoCallback(
     @CallbackUserData() userData: CallbackUserDataDTO,
     @Res() res: Response,
+    @Query('redirectTo') redirectTo: string | undefined,
   ) {
     const { id, username } = userData;
+    console.log(redirectTo);
 
     const {
       accessToken,
@@ -50,7 +53,7 @@ export class AuthController {
 
     // 프론트엔드 주소로 리다이렉션하면서 토큰을 쿼리 파라미터로 전달
     res.redirect(
-      `${process.env.CLIENT_URL}/auth?access_token=${accessToken}&refresh_token=${refreshToken}&access_expired_at=${accessTokenExpiredAt}&refresh_expired_at=${refreshTokenExpiredAt}`,
+      `${process.env.CLIENT_URL}/auth?access_token=${accessToken}&refresh_token=${refreshToken}&access_expired_at=${accessTokenExpiredAt}&refresh_expired_at=${refreshTokenExpiredAt}${redirectTo && `&redirect_to=${redirectTo}`}`,
     );
   }
 
