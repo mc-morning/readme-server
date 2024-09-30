@@ -93,6 +93,18 @@ export class QuestionnaireService {
       return false;
     }
 
+    await this.prisma.answer.deleteMany({
+      where: {
+        question: {
+          questionnaireId,
+        },
+      },
+    });
+
+    await this.prisma.question.deleteMany({
+      where: { questionnaireId },
+    });
+
     await this.prisma.questionnaire.delete({
       where: { id: questionnaireId },
     });
