@@ -16,13 +16,13 @@ import { AuthService } from 'src/auth/auth.service';
 import { CreateQuestionnaireDTO } from './dto/create-questionnaire.dto';
 
 @Controller('/questionnaire')
-@UseGuards(JwtAuthGuard)
 export class QuestionnaireController {
   constructor(
     private readonly questionnaireService: QuestionnaireService,
     private readonly authService: AuthService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('/list')
   async getUserQuestionnaires(@Request() req: any) {
     const accessToken = req.headers.authorization.split(' ')[1];
@@ -31,6 +31,7 @@ export class QuestionnaireController {
     return await this.questionnaireService.getUserQuestionnaires(user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/create')
   async createQuestionnaire(
     @Request() req: any,
@@ -54,6 +55,7 @@ export class QuestionnaireController {
     return this.questionnaireService.getQuestionnaire(questionnaireId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':questionnaireId')
   async deleteQuestionnaire(
     @Param('questionnaireId') questionnaireId: string,
